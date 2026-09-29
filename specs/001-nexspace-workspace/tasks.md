@@ -21,9 +21,9 @@ validação independentes.
 
 **Objetivo**: Inicializar o módulo Go, as dependências aprovadas e a composição do binário.
 
-- [ ] T001 Inicializar o módulo Go e declarar Cobra e `github.com/zalando/go-keyring` em `go.mod`
-- [ ] T002 Criar o ponto de entrada e a composição inicial de adapters em `cmd/nexspace/main.go`
-- [ ] T003 [P] Criar a árvore Cobra raiz e o mapeamento de erros para `stdout`, `stderr` e status de saída em `internal/cli/root.go`
+- [X] T001 Inicializar o módulo Go e declarar Cobra e `github.com/zalando/go-keyring` em `go.mod`
+- [X] T002 Criar o ponto de entrada e a composição inicial de adapters em `cmd/nexspace/main.go`
+- [X] T003 [P] Criar a árvore Cobra raiz e o mapeamento de erros para `stdout`, `stderr` e status de saída em `internal/cli/root.go`
 
 ---
 
