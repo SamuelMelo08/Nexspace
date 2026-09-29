@@ -21,7 +21,9 @@ GitHub no keyring do sistema
 
 **Armazenamento**: `nexspace.json` portátil com `version`, `repository` e `run` opcional;
 `config.json` local em `os.UserConfigDir()/nexspace`; token apenas no keyring do sistema; descrição
-e visibilidade são consultadas no GitHub
+e visibilidade são consultadas no GitHub. O desenvolvedor configura `run` diretamente no manifesto;
+a V1 não adiciona comando de configuração. Se o GitHub estiver indisponível, `info` preserva a saída
+local e informa que descrição e visibilidade remotas não estão disponíveis.
 
 **Testes**: `go test`, testes table-driven, `t.TempDir`, `t.Setenv` e fakes escritos à mão nos
 limites de GitHub, Git e processos

@@ -32,14 +32,18 @@ confirmar o uso, os argumentos e as flags do comando antes de validar os cenári
 ## Cenário 3: consultar e inspecionar
 
 1. Adicione um arquivo de evidência conhecido, como `go.mod` ou `package.json`, a uma cópia local.
-2. Execute `nexspace info owner/repository` e confirme identidade e disponibilidade.
+2. Execute `nexspace info owner/repository` e confirme identidade e disponibilidade. Impeça a
+   consulta ao GitHub e confirme que a CLI mantém as informações locais e informa que `description`
+   e `visibility` remotas estão indisponíveis.
 3. Execute `nexspace status owner/repository` e confirme o estado Git, a tecnologia e o arquivo de
    evidência. Remova os arquivos de evidência e confirme `unknown` para a categoria correspondente.
 
 ## Cenário 4: abrir e executar
 
 1. Configure `editor` local como lista de argumentos em `config.json`.
-2. Adicione uma lista `run` válida ao `nexspace.json` do projeto.
+2. Configure diretamente uma lista `run` válida no `nexspace.json` do projeto, por exemplo
+   `{"run":["pnpm","dev"]}`. Não use um comando Nexspace de configuração, pois ele não faz parte
+   da V1.
 3. Execute `nexspace open owner/repository` e confirme que o editor recebe o diretório do projeto.
 4. Execute `nexspace run owner/repository` e confirme que o comando é executado no diretório do
    projeto, com saída visível no terminal.

@@ -9,12 +9,13 @@ máquina. A V1 usa o seguinte contrato:
 |-------|------|-------------|--------------------|
 | `version` | inteiro | Sim | Deve ser `1`. |
 | `repository` | string | Sim | Formato exato `owner/repository`; ambos os segmentos são não vazios. |
-| `run` | array de strings | Não | Primeiro item é o executável; todos os itens são não vazios; sem paths absolutos. |
+| `run` | array de strings | Não | Primeiro item é o executável; todos os itens são não vazios; sem paths absolutos; é configurado diretamente pelo desenvolvedor no manifesto. |
 
 O decoder rejeita campos desconhecidos. A validação também rejeita credenciais, hostnames, paths
 absolutos e dados locais nos campos de texto. O manifesto não contém token, workspace, editor, estado
 Git, stack, package manager, resultados de inspeção, descrição ou visibilidade. Descrição e
-visibilidade são consultadas no GitHub, sua fonte de verdade.
+visibilidade são consultadas no GitHub, sua fonte de verdade. A V1 não fornece comando para alterar
+`run`; o desenvolvedor o edita diretamente no `nexspace.json`.
 
 Exemplo:
 
@@ -44,7 +45,7 @@ inferido.
 | Entidade | Atributos | Relações e regras |
 |----------|-----------|-------------------|
 | `ProjectRef` | `Owner`, `Repository` | Identidade canônica; serializa como `owner/repository`; usada em todos os comandos com `<project>`. |
-| `RemoteProject` | `ProjectRef`, `Description`, `Visibility`, `CloneURL` | Vem do GitHub, fonte de verdade para `Description` e `Visibility`; só é Projeto Nexspace quando o manifesto remoto passa na validação. |
+| `RemoteProject` | `ProjectRef`, `Description`, `Visibility`, `CloneURL` | Vem do GitHub, fonte de verdade para `Description` e `Visibility`; esses metadados podem estar indisponíveis sem invalidar uma `LocalProject`; só é Projeto Nexspace quando o manifesto remoto passa na validação. |
 | `LocalProject` | `ProjectRef`, `Path`, `Manifest`, `GitStatus` | É encontrado exclusivamente sob o workspace local configurado. |
 | `Finding` | `Category`, `Name`, `EvidencePath`, `EvidenceRule` | Produzido por um detector; uma descoberta confirmada sempre tem arquivo e regra. |
 | `Inspection` | lista de `Finding`, categorias `unknown` | Calculada a cada `status`; não é persistida. |

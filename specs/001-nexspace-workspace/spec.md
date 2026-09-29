@@ -168,7 +168,9 @@ que cada operação é encaminhada ao destino configurado.
   projeto Nexspace acessível à conta GitHub autenticada, sem sobrescrever um destino não vazio ou
   incompatível.
 - **RF-011**: `nexspace info <project>` deve exibir as informações gerais da identidade do projeto e
-  sua disponibilidade local, remota ou ambas.
+  sua disponibilidade local, remota ou ambas. Quando a cópia local estiver disponível, mas os
+  metadados remotos não puderem ser consultados, deve exibir as informações locais e indicar
+  claramente que `description` e `visibility` remotas estão indisponíveis.
 - **RF-012**: `nexspace status <project>` deve exibir as informações relevantes do Git para uma cópia
   local e o ambiente detectado a partir do conteúdo atual do projeto.
 - **RF-013**: O Nexspace deve detectar stack, package manager e outras tecnologias apenas a partir de
@@ -179,9 +181,10 @@ que cada operação é encaminhada ao destino configurado.
   verdade permanente do projeto.
 - **RF-016**: `nexspace open <project>` deve abrir o projeto local no editor configurado e deve
   informar claramente quando não houver editor configurado ou a cópia local estiver indisponível.
-- **RF-017**: `nexspace run <project>` deve executar o comando de execução portátil configurado no
-  `nexspace.json` para o projeto local e deve informar claramente quando o comando não estiver
-  configurado ou não puder ser iniciado.
+- **RF-017**: `nexspace run <project>` deve executar o comando de execução portátil configurado
+  diretamente pelo desenvolvedor no `nexspace.json` para o projeto local e deve informar claramente
+  quando o comando não estiver configurado ou não puder ser iniciado. A V1 não fornece comando de
+  configuração para modificar `run`.
 - **RF-018**: A CLI deve permitir executar todas as capacidades fundamentais da V1 pelos comandos
   `nexspace login`, `nexspace create`, `nexspace projects`, `nexspace clone <project>`,
   `nexspace info <project>`, `nexspace status <project>`, `nexspace run <project>` e
