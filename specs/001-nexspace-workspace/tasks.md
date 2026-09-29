@@ -37,8 +37,8 @@ validação independentes.
 - [ ] T005 [P] Implementar tipos compartilhados `ProjectRef`, `RemoteProject`, `LocalProject`, `Finding` e `Inspection` em `internal/project/project.go`
 - [ ] T006 [P] Implementar process runner com argumentos explícitos, diretório de trabalho e I/O herdado em `internal/process/runner.go`
 - [ ] T007 [P] Criar fake controlável do process runner para testes isolados em `internal/process/runner_test.go`
-- [ ] T008 Implementar leitura, validação estrita e escrita atômica de `nexspace.json` em `internal/manifest/manifest.go`, aceitando somente `version`, `repository` e `run` opcional; `version` deve ser `1`, `repository` deve ter formato `owner/repository`, e `run` deve ter strings não vazias sem paths absolutos
-- [ ] T009 Implementar testes table-driven do manifesto, incluindo campos desconhecidos, credenciais, hostnames, paths absolutos e `run` inválido, em `internal/manifest/manifest_test.go`
+- [ ] T008 Implementar leitura, validação estrita e escrita atômica de `nexspace.json` em `internal/manifest/manifest.go`, aceitando somente `version`, `repository` e `run` opcional; `version` deve ser `1`, `repository` deve ter formato `owner/repository`, e `run` deve ser uma lista JSON não vazia de strings não vazias, sem paths absolutos
+- [ ] T009 Implementar testes table-driven do manifesto, incluindo campos desconhecidos, credenciais, hostnames, paths absolutos e `run` inválido como string escalar, lista vazia ou item vazio, em `internal/manifest/manifest_test.go`
 - [ ] T010 [P] Implementar leitura e escrita atômica de `workspace` e `editor` em `os.UserConfigDir()/nexspace/config.json` em `internal/config/config.go`
 - [ ] T011 [P] Implementar testes isolados de configuração com `t.TempDir` e `t.Setenv` em `internal/config/config_test.go`
 - [ ] T012 Implementar resolução de cópias locais exclusivamente no workspace configurado e validação de destino livre em `internal/project/resolver.go`
@@ -63,11 +63,11 @@ um projeto `public` ou `private`; confirmar remoto, `nexspace.json` mínimo e c�
 - [ ] T018 [P] [US1] Criar fakes de GitHub, Git e keyring com falhas programáveis em `internal/app/ports_test.go`
 - [ ] T019 [US1] Implementar caso de uso de login, incluindo cancelamento, recusa, expiração e keyring indisponível, em `internal/app/auth.go`
 - [ ] T020 [US1] Implementar caso de uso de criação com diretório temporário, manifesto mínimo, criação remota, push, publicação atômica e relatório de recuperação em `internal/app/projects.go`
-- [ ] T021 [US1] Implementar testes dos casos de uso de login e criação, incluindo falha antes e depois da criação remota, em `internal/app/auth_test.go`
+- [ ] T021 [US1] Implementar testes dos casos de uso de login e criação, incluindo falha antes e depois da criação remota e entradas de criação ausentes ou inválidas para nome, descrição e visibilidade, sem iniciar alteração local ou remota, em `internal/app/auth_test.go` e `internal/app/projects_test.go`
 - [ ] T022 [US1] Implementar testes do fluxo de criação sem scaffold de aplicação e sem destino final parcial em `internal/app/projects_test.go`
 - [ ] T023 [US1] Conectar `nexspace login` ao caso de uso de autenticação em `internal/cli/login.go`
 - [ ] T024 [US1] Conectar `nexspace create` ao caso de uso de criação, com argumentos e flags Cobra para nome, descrição e `public` ou `private`, em `internal/cli/create.go`
-- [ ] T025 [US1] Cobrir ajuda, aridade, mensagens de falha e status de saída dos comandos `login` e `create` em `internal/cli/create_test.go`
+- [ ] T025 [US1] Cobrir ajuda, aridade, entradas inválidas de criação, mensagens de falha e status de saída dos comandos `login` e `create` em `internal/cli/create_test.go`
 
 **Checkpoint**: `nexspace login` e `nexspace create` entregam o MVP de criação de projeto e podem ser
 validados sem GitHub, Git ou keyring reais nos testes comuns.
@@ -88,7 +88,7 @@ manifesto, listar somente o projeto Nexspace, cloná-lo em diretório vazio e co
 - [ ] T029 [US2] Implementar caso de uso de clone com destino temporário, validação do manifesto e publicação atômica no workspace em `internal/app/projects.go`
 - [ ] T030 [US2] Implementar testes de listagem e clone para manifesto remoto ausente ou inválido, destino não vazio e falha de clone em `internal/app/projects_test.go`
 - [ ] T031 [US2] Conectar `nexspace projects` e `nexspace clone <project>` aos casos de uso em `internal/cli/projects.go` e `internal/cli/clone.go`
-- [ ] T032 [US2] Cobrir formato obrigatório `owner/repository`, ajuda e status de saída para `projects` e `clone` em `internal/cli/projects_test.go`
+- [ ] T032 [US2] Cobrir o formato obrigatório `owner/repository` para `clone`, e ajuda e status de saída para `projects` e `clone`, em `internal/cli/projects_test.go` e `internal/cli/clone_test.go`
 
 **Checkpoint**: A recuperação de um projeto existente pode ser validada independentemente da criação
 de projetos, com fakes de GitHub, Git e filesystem temporário.
@@ -111,7 +111,7 @@ local de `info` durante falha de GitHub.
 - [ ] T037 [US3] Implementar casos de uso de informação e status, incluindo fallback local quando consulta de `description` e `visibility` falhar, em `internal/app/projects.go`
 - [ ] T038 [US3] Implementar testes de informação e status para Git inválido, remoto ausente, GitHub indisponível e resultados `unknown` em `internal/app/projects_test.go`
 - [ ] T039 [US3] Conectar `nexspace info <project>` e `nexspace status <project>` aos casos de uso em `internal/cli/info.go` e `internal/cli/status.go`
-- [ ] T040 [US3] Cobrir saída de evidências, indisponibilidade de metadados remotos e códigos de saída em `internal/cli/info_test.go`
+- [ ] T040 [US3] Cobrir saída de evidências, indisponibilidade de metadados remotos, formato obrigatório `owner/repository` e códigos de saída de `info` e `status` em `internal/cli/info_test.go` e `internal/cli/status_test.go`
 
 **Checkpoint**: `info` e `status` produzem somente informações comprovadas, e `info` continua útil
 com o GitHub indisponível quando existe cópia local.
@@ -124,12 +124,14 @@ com o GitHub indisponível quando existe cópia local.
 diretamente pelo desenvolvedor no manifesto, sem shell e sem novo comando de configuração.
 
 **Teste independente**: Com runner fake, editor configurado e manifesto contendo
-`run: ["pnpm", "dev"]`, abrir e executar um projeto local; confirmar argumentos, diretório de trabalho
+`run: ["pnpm", "dev"]`, abrir e executar um projeto local; confirmar que o editor recebe o caminho da
+cópia local, que `run` recebe exatamente `pnpm` e `dev` sem shell, que ambos usam o diretório de
+trabalho do projeto e que a CLI apresenta o resultado e o status de saída corretos.
 
 - [ ] T041 [US4] Implementar casos de uso para abrir o editor local e executar `run` como lista de argumentos sem shell em `internal/app/projects.go`
 - [ ] T042 [US4] Implementar testes de abertura e execução para editor ausente, `run` ausente ou inválido e falha de processo em `internal/app/projects_test.go`
 - [ ] T043 [US4] Conectar `nexspace open <project>` e `nexspace run <project>` aos casos de uso em `internal/cli/open.go` e `internal/cli/run.go`
-- [ ] T044 [US4] Cobrir aridade, ajuda, ausência de configuração e status de saída de `open` e `run` em `internal/cli/open_test.go`
+- [ ] T044 [US4] Cobrir formato obrigatório `owner/repository`, aridade, ajuda, ausência de configuração e status de saída de `open` e `run` em `internal/cli/open_test.go` e `internal/cli/run_test.go`
 
 **Checkpoint**: `open` e `run` operam apenas em cópias locais e não interpretam strings por shell.
 
@@ -141,7 +143,7 @@ diretamente pelo desenvolvedor no manifesto, sem shell e sem novo comando de con
 
 - [ ] T045 [P] Executar a suite determinística e corrigir isolamento de ambiente em `internal/**/**/*_test.go`
 - [ ] T046 [P] Revisar as mensagens de erro e recuperação contra o contrato em `specs/001-nexspace-workspace/contracts/cli.md`
-- [ ] T047 [P] Validar os cenários de criação, recuperação, inspeção, fallback remoto, abertura e execução em `specs/001-nexspace-workspace/quickstart.md`
+- [ ] T047 [P] Validar e registrar no quickstart os cenários de criação, recuperação, inspeção, fallback remoto, abertura e execução, incluindo criação com sucesso para pelo menos 90% dos participantes em até 3 minutos, clonagem com cópia local identificável em 100% das tentativas, em até 3 minutos, com rede e GitHub disponíveis e listagem de um conjunto conhecido de 50 projetos Nexspace acessíveis, sendo 25 cópias locais válidas no workspace configurado e 25 somente remotos, verificando e registrando a indicação local/remota correta para cada projeto, em `specs/001-nexspace-workspace/quickstart.md`
 - [ ] T048 Revisar portabilidade do manifesto, evidências do Inspector e operações parciais contra `specs/001-nexspace-workspace/data-model.md` e `.specify/memory/constitution.md`
 
 ---

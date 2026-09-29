@@ -19,11 +19,12 @@ versionado e a inspeção usa detectores independentes baseados apenas em arquiv
 `github.com/spf13/cobra` para a estrutura da CLI e `github.com/zalando/go-keyring` para o token
 GitHub no keyring do sistema
 
-**Armazenamento**: `nexspace.json` portátil com `version`, `repository` e `run` opcional;
-`config.json` local em `os.UserConfigDir()/nexspace`; token apenas no keyring do sistema; descrição
-e visibilidade são consultadas no GitHub. O desenvolvedor configura `run` diretamente no manifesto;
-a V1 não adiciona comando de configuração. Se o GitHub estiver indisponível, `info` preserva a saída
-local e informa que descrição e visibilidade remotas não estão disponíveis.
+**Armazenamento**: `nexspace.json` portátil com `version`, `repository` e `run` opcional como lista
+JSON de argumentos não vazios, executada diretamente sem shell; `config.json` local em
+`os.UserConfigDir()/nexspace`; token apenas no keyring do sistema; descrição e visibilidade são
+consultadas no GitHub. O desenvolvedor configura `run` diretamente no manifesto; a V1 não adiciona
+comando de configuração. Se o GitHub estiver indisponível, `info` preserva a saída local e informa que
+descrição e visibilidade remotas não estão disponíveis.
 
 **Testes**: `go test`, testes table-driven, `t.TempDir`, `t.Setenv` e fakes escritos à mão nos
 limites de GitHub, Git e processos

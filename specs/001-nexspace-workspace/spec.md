@@ -183,8 +183,10 @@ que cada operação é encaminhada ao destino configurado.
   informar claramente quando não houver editor configurado ou a cópia local estiver indisponível.
 - **RF-017**: `nexspace run <project>` deve executar o comando de execução portátil configurado
   diretamente pelo desenvolvedor no `nexspace.json` para o projeto local e deve informar claramente
-  quando o comando não estiver configurado ou não puder ser iniciado. A V1 não fornece comando de
-  configuração para modificar `run`.
+  quando o comando não estiver configurado ou não puder ser iniciado. O campo opcional `run` deve ser
+  uma lista JSON de uma ou mais strings não vazias: o primeiro item é o programa e os demais são seus
+  argumentos, executados diretamente sem shell. A V1 não fornece comando de configuração para
+  modificar `run`.
 - **RF-018**: A CLI deve permitir executar todas as capacidades fundamentais da V1 pelos comandos
   `nexspace login`, `nexspace create`, `nexspace projects`, `nexspace clone <project>`,
   `nexspace info <project>`, `nexspace status <project>`, `nexspace run <project>` e
@@ -223,9 +225,9 @@ que cada operação é encaminhada ao destino configurado.
   assistência.
 - **CS-002**: Em teste com até 50 projetos Nexspace acessíveis à conta, a listagem identifica
   corretamente a disponibilidade local ou remota de 100% dos projetos exibidos.
-- **CS-003**: Em teste com um projeto Nexspace existente apenas remotamente, pelo menos 95% das
-  tentativas de recuperá-lo em um destino vazio resultam em uma cópia local identificável sem
-  intervenção adicional.
+- **CS-003**: Em teste com um projeto Nexspace existente apenas remotamente, conexão disponível e
+  destino vazio, 100% das tentativas de `nexspace clone <project>` concluem com uma cópia local
+  identificável em até 3 minutos, sem intervenção adicional.
 - **CS-004**: Em teste com conjuntos de arquivos conhecidos, a detecção apresenta a tecnologia e sua
   evidência em 100% dos casos com evidência suficiente e apresenta `unknown` em 100% dos casos sem
   evidência suficiente.
